@@ -3,7 +3,7 @@ version: '3.8'
 services:
   app:
     build: 
-      context: ./back/product/product
+      context: ./back/product
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
