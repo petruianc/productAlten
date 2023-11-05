@@ -5,17 +5,17 @@ import com.petru.model.Product;
 import com.petru.model.Products;
 import com.petru.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
 
 @RestController
 @RequestMapping("/products")
@@ -89,12 +89,17 @@ public class ProductController {
                             content = @Content(
                                     mediaType = "application/json",
                                     schema = @Schema(implementation = Product.class),
-                                    examples = @ExampleObject(value = "{\"code\": \"f234gh5\",\"description\": \"Product description\",\"name\": \"Smartphone\", \"category\": \"Electronics\", \"price\": 23}")
+                                    examples = @ExampleObject(value = "{\"code\": \"123test\",\"description\": \"Test\",\"name\": \"Test\", \"category\": \"Electronics\", \"price\": 23}")
                             )
                     ),
                     @ApiResponse(
                             description = "Internal Server Error",
                             responseCode = "500",
+                            content = @Content
+                    ),
+                    @ApiResponse(
+                            description = "Bad Request",
+                            responseCode = "400",
                             content = @Content
                     )
             }
@@ -112,7 +117,7 @@ public class ProductController {
     @Operation(summary = "Update an existing product",
             responses = {
                     @ApiResponse(
-                            description = "Product created",
+                            description = "Product updated!",
                             responseCode = "200",
                             content = @Content(
                                     mediaType = "application/json",
@@ -123,7 +128,11 @@ public class ProductController {
                     @ApiResponse(
                             description = "Bad Request",
                             responseCode = "400",
-                            content = @Content
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = Product.class),
+                                    examples = @ExampleObject(value = "{\"code\": \"f234gh5\",\"description\": \"Product description\",\"name\": \"Smartphone\", \"category\": \"Electronics\", \"id\": -100}")
+                            )
                     ),
                     @ApiResponse(
                             description = "Internal Server Error",
@@ -142,8 +151,23 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Delete a product")
-    public ResponseEntity<String> deleteProduct(@PathVariable Long id) {
+    @Operation(summary = "Delete a product by its ID", description = "Deletes a product with the given ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "Product has been deleted successfully",
+                    content = @Content(schema = @Schema(implementation = String.class)))
+            ,
+            @ApiResponse(
+                    description = "Product doesn't exist!",
+                    responseCode = "400",
+                    content = @Content(schema = @Schema(implementation = String.class))
+            ),
+            @ApiResponse(responseCode = "500",
+                    description = "Internal Server Error",
+                    content = @Content)
+    })
+    public ResponseEntity<String> deleteProduct(
+            @Parameter(description = "ID of the product to delete", required = true) @PathVariable Long id) {
         try{
             return productService.deleteProduct(id);
         }catch (Exception e){

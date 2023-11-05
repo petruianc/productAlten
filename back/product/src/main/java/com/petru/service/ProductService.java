@@ -55,8 +55,9 @@ public class ProductService {
     public ResponseEntity<Product> updateProduct(Long id, Product updatedProduct) {
         log.info("Inside ProductService.updateProduct() {}", updatedProduct);
         try{
-            if(updatedProduct != null){
-                return new ResponseEntity<>(productDao.updateProduct(id, updatedProduct), HttpStatus.OK);
+            if(productDao.updateProduct(id, updatedProduct)){
+                updatedProduct.setId(id);
+                return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
             }
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }catch (Exception e){

@@ -40,7 +40,7 @@ public class ProductDao {
         mapper.writeValue(DATA_FILE, products);
     }
 
-    public Product updateProduct(Long id, Product updatedProduct) throws IOException {
+    public boolean updateProduct(Long id, Product updatedProduct) throws IOException {
         Products products = getAllProducts();
         List<Product> listProducts = products.getProducts();
         for (int i = 0; i < listProducts.size(); i++) {
@@ -49,10 +49,10 @@ public class ProductDao {
                 listProducts.set(i, updatedProduct);
                 products.setProducts(listProducts);
                 saveProducts(products);
-                return updatedProduct;
+                return true;
             }
         }
-        return null;
+        return false;
     }
 
     public boolean deleteProduct(Long id) throws IOException {
